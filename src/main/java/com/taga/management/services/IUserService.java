@@ -6,4 +6,5 @@ import com.taga.management.models.User;
 public interface IUserService {
     User createUser(UserDTO userDTO);
     String login(String username, String password) throws Exception;
+    User findById(Long id);
 }

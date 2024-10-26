@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "com.taga.management")
+@ComponentScan(basePackages = "com.taga")
 public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper(){
