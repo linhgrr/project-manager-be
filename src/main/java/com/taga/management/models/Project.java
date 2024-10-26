@@ -29,11 +29,19 @@ public class Project {
     @Column(name = "task")
     private String status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "project_manager",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "manager_id")
     )
     private List<User> managers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_staff",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "staff_id")
+    )
+    private List<User> staffs;
 }

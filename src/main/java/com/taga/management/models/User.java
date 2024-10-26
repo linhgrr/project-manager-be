@@ -46,8 +46,11 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToMany(mappedBy = "managers")
-    private List<Project> projects;
+    @ManyToMany(mappedBy = "managers", fetch = FetchType.LAZY)
+    private List<Project> managedProjects;
+
+    @ManyToMany(mappedBy = "staffs")
+    private List<Project> joinedProjects;
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Task> tasks;
