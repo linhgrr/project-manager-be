@@ -1,4 +1,4 @@
-package com.taga.management.services;
+package com.taga.management.converters;
 
 import com.taga.management.DTOs.request.TaskInputDTO;
 import com.taga.management.models.Task;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class TaskConverter {
 
     @Autowired
-    private static ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
-    public static Task convertToTask(TaskInputDTO taskDTO) {
+    public Task convertToTask(TaskInputDTO taskDTO) {
         Task task = modelMapper.map(taskDTO, Task.class);
         return task;
     }
