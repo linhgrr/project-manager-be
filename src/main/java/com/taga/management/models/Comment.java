@@ -2,6 +2,7 @@ package com.taga.management.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -11,21 +12,20 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "comment")
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String author;
-    private String content;
-    private Date createdDate;
+    String author;
+    String content;
+    Date createdDate;
 
     @ManyToOne
     @JoinColumn(name = "task_id")
-    private Task task;
+    Task task;
 
-    // Getters and Setters
 }
 
