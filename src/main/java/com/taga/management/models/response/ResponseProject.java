@@ -1,6 +1,7 @@
 package com.taga.management.models.response;
 
 import com.taga.management.DTOs.ManagerDTO;
+import com.taga.management.DTOs.StaffDTO;
 import com.taga.management.models.Project;
 import com.taga.management.models.User;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class ResponseProject {
     private Date endDate;
     private String status;
     private List<ManagerDTO> managers;
-    private List<User> staffs;
+    private List<StaffDTO> staffs;
     private boolean isManager;
     private String pictureUrl;
 }

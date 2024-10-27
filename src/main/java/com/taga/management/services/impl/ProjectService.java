@@ -1,7 +1,10 @@
 package com.taga.management.services.impl;
 
+import com.taga.management.DTOs.AssignStaffDTO;
 import com.taga.management.DTOs.ProjectDTO;
 import com.taga.management.converters.ProjectConverter;
+import com.taga.management.exceptions.AccessDeniedException;
+import com.taga.management.exceptions.ProjectNotFoundException;
 import com.taga.management.models.Project;
 import com.taga.management.models.User;
 import com.taga.management.models.response.ResponseProject;
@@ -53,9 +56,24 @@ public class ProjectService implements IProjectService{
 
     @Override
     public ResponseProject getProjectById(Long projectId) {
-        ResponseProject responseProject = new ResponseProject();
+        ResponseProject responseProject;
         Project project = projectRepository.findById(projectId).orElse(null);
         responseProject = projectConverter.toResponseProject(project);
         return responseProject;
+    }
+
+    @Override
+    public void assignStaff(AssignStaffDTO assignStaffDTO) {
+        Project project = projectRepository.findById(assignStaffDTO.getProjectId())
+                .orElseThrow(() -> new ProjectNotFoundException("Project not found"));
+
+        Long userId = SecurityUtils.getPrincipal().getId();
+        boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(userId));
+
+        if (!isManager) {
+            throw new AccessDeniedException("User does not have permission to assign staff to this project");
+        }
+
+        projectRepository.assignStaff(assignStaffDTO);
     }
 }

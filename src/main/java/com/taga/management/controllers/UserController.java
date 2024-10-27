@@ -3,6 +3,7 @@ package com.taga.management.controllers;
 import com.taga.management.DTOs.UserDTO;
 import com.taga.management.DTOs.UserLoginDTO;
 import com.taga.management.models.User;
+import com.taga.management.models.response.ResponseUser;
 import com.taga.management.services.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,10 +22,6 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping
-    public String getAllUsers() {
-        return "lll";
-    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO,
                                       BindingResult result){
@@ -55,5 +53,10 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    public List<ResponseUser> getUserByName(@RequestParam String name) {
+        return userService.findUserByName(name);
     }
 }

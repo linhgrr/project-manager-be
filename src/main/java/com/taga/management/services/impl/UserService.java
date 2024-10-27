@@ -2,8 +2,11 @@ package com.taga.management.services.impl;
 
 import com.taga.management.DTOs.UserDTO;
 import com.taga.management.components.JwtTokenUtil;
+import com.taga.management.controllers.UserController;
+import com.taga.management.converters.UserConverter;
 import com.taga.management.models.Role;
 import com.taga.management.models.User;
+import com.taga.management.models.response.ResponseUser;
 import com.taga.management.repository.RoleRepository;
 import com.taga.management.repository.UserRepository;
 import com.taga.management.services.IUserService;
@@ -16,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,6 +33,8 @@ public class UserService implements IUserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
+    @Autowired
+    private final UserConverter userConverter;
 
 
     @Override
@@ -46,6 +52,8 @@ public class UserService implements IUserService {
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())
                 .dateOfBirth(userDTO.getDateOfBirth())
+                .pictureUrl(userDTO.getPictureUrl())
+                .active(true)
                 .role(role.get())
                 .build();
 
@@ -80,5 +88,11 @@ public class UserService implements IUserService {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<ResponseUser> findUserByName(String name) {
+        List<User> userList = userRepository.findAllByFullNameContains(name);
+        return userConverter.toResponseUserList(userList);
     }
 }
