@@ -20,12 +20,7 @@ public class TaskController {
     @GetMapping(value = "/{projectId}/tasks")
     public ArrayList<TaskResponseDTO> getTaskOfProject(@PathVariable Long projectId) {
         ArrayList<TaskResponseDTO> tasks = new ArrayList<>();
-        try {
-            tasks = taskService.getTaskOfProject(projectId);
-        }
-        catch (Exception e){
-            e.getMessage();
-        }
+        tasks = taskService.getTaskOfProject(projectId);
         return tasks;
     }
 
@@ -34,12 +29,11 @@ public class TaskController {
         ResponseEntity responseEntity = new ResponseEntity();
         try {
             taskInputDTO.setProjectId(projectId);
-            taskService.addOrUpdateTask(taskInputDTO);
+            responseEntity = taskService.addOrUpdateTask(taskInputDTO);
         } catch (Exception e) {
             responseEntity.setMessage("Failed to add task");
             return responseEntity;
         }
-        responseEntity.setMessage("Successfully added task");
         return responseEntity;
     }
 

@@ -3,6 +3,7 @@ package com.taga.management.services.impl;
 import com.taga.management.DTOs.request.TaskInputDTO;
 import com.taga.management.DTOs.response.TaskResponseDTO;
 import com.taga.management.models.Project;
+import com.taga.management.models.ResponseEntity;
 import com.taga.management.models.Task;
 import com.taga.management.repository.ProjectRepository;
 import com.taga.management.repository.TaskRepository;
@@ -31,8 +32,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public ArrayList<TaskResponseDTO> getTaskOfProject(Long projectId) {
-        ArrayList<Task> tasks = taskRepository.findByProjectId(projectId);
+        ArrayList<Task> tasks;
         ArrayList<TaskResponseDTO> taskResponseDTOs = new ArrayList<>();
+        try {
+            tasks = taskRepository.findByProjectId(projectId);
+        }
+        catch (Exception e){
+            taskResponseDTOs = null;
+            return taskResponseDTOs;
+        }
+
+        ArrayList<TaskResponseDTO> finalTaskResponseDTOs = taskResponseDTOs;
         tasks.stream().forEach(task -> {
             TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
             if (task.getComments() != null) {
@@ -40,25 +50,32 @@ public class TaskServiceImpl implements TaskService {
             } else {
                 taskResponseDTO.setCommentNumber(0);
             }
-            taskResponseDTOs.add(taskResponseDTO);
-
+            finalTaskResponseDTOs.add(taskResponseDTO);
         });
         return taskResponseDTOs;
     }
 
 
     @Override
-    public void addOrUpdateTask(TaskInputDTO taskInputDTO) {
+    public ResponseEntity addOrUpdateTask(TaskInputDTO taskInputDTO) {
+        ResponseEntity responseEntity = new ResponseEntity();
         Task task = taskConverter.convertToTask(taskInputDTO);
         try {
-            Project project = projectRepository.findById(taskInputDTO.getProjectId()).orElse(null);
+            Project project = projectRepository.findById(taskInputDTO.getProjectId())
+                    .orElseThrow(EntityNotFoundException::new);
             task.setProject(project);
         } catch (Exception e) {
-            System.out.println("Project not found");
-            return;
+            responseEntity.setMessage("Project not found");
+            return responseEntity;
         }
-        System.out.println("Add task notification");
+        if (taskInputDTO.getProjectId() != null){
+            responseEntity.setMessage("Successfully added task");
+        }
+        else {
+            responseEntity.setMessage("Update task successfully");
+        }
         taskRepository.save(task);
+        return responseEntity;
     }
 
     @Override
