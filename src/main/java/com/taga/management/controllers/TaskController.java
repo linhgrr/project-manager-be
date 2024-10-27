@@ -17,6 +17,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    // Add a new endpoint to get all tasks of a project
     @GetMapping(value = "/{projectId}/tasks")
     public ArrayList<TaskResponseDTO> getTaskOfProject(@PathVariable Long projectId) {
         ArrayList<TaskResponseDTO> tasks = new ArrayList<>();
@@ -24,6 +25,7 @@ public class TaskController {
         return tasks;
     }
 
+    // Add a new endpoint to add or update a task
     @PostMapping(value = "/{projectId}/tasks")
     public ResponseEntity addOrUpdateTask(@RequestBody TaskInputDTO taskInputDTO, @PathVariable Long projectId) {
         ResponseEntity responseEntity = new ResponseEntity();
@@ -37,5 +39,24 @@ public class TaskController {
         return responseEntity;
     }
 
+    // Add a new endpoint to delete a task
+    @DeleteMapping(value = "/{projectId}/tasks/{taskId}")
+    public ResponseEntity deleteTask(@PathVariable Long projectId, @PathVariable Long taskId) {
+        ResponseEntity responseEntity = new ResponseEntity();
+        try {
+            responseEntity = taskService.deleteTask(projectId, taskId);
+        } catch (Exception e) {
+            responseEntity.setMessage("Failed to delete task");
+            return responseEntity;
+        }
+        return responseEntity;
+    }
 
+    // Add a new endpoint to find tasks by title
+    @GetMapping(value = "/{projectId}/tasks/{title}")
+    public ArrayList<TaskResponseDTO> findTasksByTitle(@PathVariable Long projectId, @PathVariable String title) {
+        ArrayList<TaskResponseDTO> tasks = new ArrayList<>();
+        tasks = taskService.findTasksByTitle(title);
+        return tasks;
+    }
 }

@@ -13,5 +13,7 @@ public interface TaskService {
     // add or update a task
     ResponseEntity addOrUpdateTask(TaskInputDTO taskInputDTO);
     // find tasks by title
-    ArrayList<Task> findTasksByTitle(String title);
+    ArrayList<TaskResponseDTO> findTasksByTitle(String title);
+    // delete a task
+    ResponseEntity deleteTask(Long projectId, Long taskId);
 }

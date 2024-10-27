@@ -79,8 +79,39 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ArrayList<Task> findTasksByTitle(String title) {
-        return taskRepository.findByTitle(title);
+    public ArrayList<TaskResponseDTO> findTasksByTitle(String title) {
+        ArrayList<Task> tasks =  taskRepository.findByTitle(title);
+        if (tasks == null) {
+            return null;
+        }
+        ArrayList<TaskResponseDTO> taskResponseDTOs = new ArrayList<>();
+        tasks.stream().forEach(task -> {
+            TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
+            if (task.getComments() != null) {
+                taskResponseDTO.setCommentNumber(task.getComments().size());
+            } else {
+                taskResponseDTO.setCommentNumber(0);
+            }
+            taskResponseDTOs.add(taskResponseDTO);
+        });
+        return taskResponseDTOs;
+    }
+
+    @Override
+    public ResponseEntity deleteTask(Long projectId, Long taskId) {
+        ResponseEntity responseEntity = new ResponseEntity();
+        try {
+            Task task = taskRepository.findById(taskId).orElseThrow(EntityNotFoundException::new);
+            if (task.getProject().getId() == projectId) {
+                taskRepository.delete(task);
+                responseEntity.setMessage("Successfully deleted task");
+            } else {
+                responseEntity.setMessage("Task not found");
+            }
+        } catch (Exception e) {
+            responseEntity.setMessage("Task not found");
+        }
+        return responseEntity;
     }
 
 
