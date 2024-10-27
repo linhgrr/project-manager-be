@@ -21,4 +21,5 @@ public class ResponseProject {
     private List<ManagerDTO> managers;
     private List<User> staffs;
     private boolean isManager;
+    private String pictureUrl;
 }

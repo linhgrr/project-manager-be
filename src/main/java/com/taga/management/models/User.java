@@ -2,6 +2,7 @@ package com.taga.management.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +46,9 @@ public class User extends BaseEntity implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Column(name = "picture_url")
+    private String pictureUrl;
 
     @ManyToMany(mappedBy = "managers", fetch = FetchType.LAZY)
     private List<Project> managedProjects;

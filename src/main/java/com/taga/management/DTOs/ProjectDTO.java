@@ -14,11 +14,13 @@ public class ProjectDTO {
     @NotBlank(message = "Please enter title")
     private String title;
     private String description;
-    @JsonProperty("start_date")
+    @JsonProperty("startDate")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonProperty("end_date")
+    @JsonProperty("endDate")
     private Date endDate;
+    @JsonProperty("pictureUrl")
+    private String pictureUrl;
     private String status;
 }
