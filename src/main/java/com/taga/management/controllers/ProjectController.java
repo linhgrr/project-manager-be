@@ -50,4 +50,10 @@ public class ProjectController {
         }
         return responseEntity;
     }
+
+    @PostMapping("/{projectId}/assign")
+    public ResponseEntity assignStaff(@PathVariable Long projectId, @RequestBody Long staffId){
+        ResponseEntity responseEntity = new ResponseEntity();
+        return responseEntity;
+    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Date;
 
@@ -28,4 +29,7 @@ public class UserDTO {
 
     @JsonProperty("date_of_birth")
     private Date dateOfBirth;
+
+    @JsonProperty("picture_url")
+    private String pictureUrl;
 }

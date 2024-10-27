@@ -40,6 +40,7 @@ public class ProjectConverter {
                         ManagerDTO managerDTO = new ManagerDTO();
                         managerDTO.setId(manager.getId());
                         managerDTO.setUsername(manager.getUsername());
+                        managerDTO.setPictureUrl(manager.getPictureUrl());
                         return managerDTO;
                     })
                     .collect(Collectors.toList()));

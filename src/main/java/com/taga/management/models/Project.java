@@ -49,4 +49,7 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "staff_id")
     )
     private List<User> staffs;
+
+    @Column(name = "picture_url")
+    private String pictureUrl;
 }
