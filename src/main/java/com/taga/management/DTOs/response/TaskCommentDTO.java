@@ -1,31 +1,18 @@
-package com.taga.management.models;
+package com.taga.management.DTOs.response;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
-
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "comment")
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TaskCommentDTO {
     Long id;
-
     String author;
     String content;
     Date createdDate;
-
-    @ManyToOne
-    @JoinColumn(name = "task_id")
-    Task task;
-
 }
-

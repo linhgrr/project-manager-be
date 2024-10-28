@@ -35,6 +35,7 @@ public class WebSecurityConfig {
                             ).permitAll()
                             .anyRequest().authenticated();
                 });
+
         return http.build();
     }
 }
