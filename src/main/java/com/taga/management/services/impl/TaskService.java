@@ -2,22 +2,25 @@ package com.taga.management.services.impl;
 
 import com.taga.management.DTOs.request.TaskInputDTO;
 import com.taga.management.DTOs.response.TaskResponseDTO;
+import com.taga.management.exceptions.AccessDeniedException;
 import com.taga.management.models.Project;
 import com.taga.management.models.ResponseEntity;
 import com.taga.management.models.Task;
 import com.taga.management.repository.ProjectRepository;
 import com.taga.management.repository.TaskRepository;
 import com.taga.management.converters.TaskConverter;
-import com.taga.management.services.TaskService;
+import com.taga.management.services.ITaskService;
+import com.taga.management.utils.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
-public class TaskServiceImpl implements TaskService {
+public class TaskService implements ITaskService {
     @Autowired
     private TaskRepository taskRepository;
 
@@ -35,6 +38,14 @@ public class TaskServiceImpl implements TaskService {
         ArrayList<Task> tasks;
         ArrayList<TaskResponseDTO> taskResponseDTOs = new ArrayList<>();
         try {
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(EntityNotFoundException::new);
+            Long userId = SecurityUtils.getPrincipal().getId();
+            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(userId));
+
+            if (!isManager) {
+                throw new AccessDeniedException("User does not have permission to assign staff to this project");
+            }
             tasks = taskRepository.findByProjectId(projectId);
         }
         catch (Exception e){
@@ -43,16 +54,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         ArrayList<TaskResponseDTO> finalTaskResponseDTOs = taskResponseDTOs;
-        tasks.stream().forEach(task -> {
-            TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
-            if (task.getComments() != null) {
-                taskResponseDTO.setCommentNumber(task.getComments().size());
-            } else {
-                taskResponseDTO.setCommentNumber(0);
-            }
-            finalTaskResponseDTOs.add(taskResponseDTO);
-        });
-        return taskResponseDTOs;
+        return getTaskResponseDTOS(tasks, taskResponseDTOs, finalTaskResponseDTOs);
     }
 
 
@@ -63,6 +65,12 @@ public class TaskServiceImpl implements TaskService {
         try {
             Project project = projectRepository.findById(taskInputDTO.getProjectId())
                     .orElseThrow(EntityNotFoundException::new);
+            Long userId = SecurityUtils.getPrincipal().getId();
+            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(userId));
+
+            if (!isManager) {
+                throw new AccessDeniedException("User does not have permission to assign staff to this project");
+            }
             task.setProject(project);
         } catch (Exception e) {
             responseEntity.setMessage("Project not found");
@@ -85,16 +93,7 @@ public class TaskServiceImpl implements TaskService {
             return null;
         }
         ArrayList<TaskResponseDTO> taskResponseDTOs = new ArrayList<>();
-        tasks.stream().forEach(task -> {
-            TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
-            if (task.getComments() != null) {
-                taskResponseDTO.setCommentNumber(task.getComments().size());
-            } else {
-                taskResponseDTO.setCommentNumber(0);
-            }
-            taskResponseDTOs.add(taskResponseDTO);
-        });
-        return taskResponseDTOs;
+        return getTaskResponseDTOS(tasks, taskResponseDTOs, taskResponseDTOs);
     }
 
     @Override
@@ -102,7 +101,7 @@ public class TaskServiceImpl implements TaskService {
         ResponseEntity responseEntity = new ResponseEntity();
         try {
             Task task = taskRepository.findById(taskId).orElseThrow(EntityNotFoundException::new);
-            if (task.getProject().getId() == projectId) {
+            if (Objects.equals(task.getProject().getId(), projectId)) {
                 taskRepository.delete(task);
                 responseEntity.setMessage("Successfully deleted task");
             } else {
@@ -114,5 +113,11 @@ public class TaskServiceImpl implements TaskService {
         return responseEntity;
     }
 
-
+    private ArrayList<TaskResponseDTO> getTaskResponseDTOS(ArrayList<Task> tasks, ArrayList<TaskResponseDTO> taskResponseDTOs, ArrayList<TaskResponseDTO> finalTaskResponseDTOs) {
+        tasks.forEach(task -> {
+            TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
+            finalTaskResponseDTOs.add(taskResponseDTO);
+        });
+        return taskResponseDTOs;
+    }
 }

@@ -2,9 +2,13 @@ package com.taga.management.controllers;
 
 import com.taga.management.DTOs.UserDTO;
 import com.taga.management.DTOs.UserLoginDTO;
+import com.taga.management.DTOs.request.UserUpdateDTO;
+import com.taga.management.DTOs.response.LoginResponse;
+import com.taga.management.converters.UserConverter;
 import com.taga.management.models.User;
-import com.taga.management.models.response.ResponseUser;
+import com.taga.management.DTOs.response.UserResponseDTO;
 import com.taga.management.services.IUserService;
+import com.taga.management.utils.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,6 +24,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private IUserService userService;
+    @Autowired
+    private UserConverter userConverter;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserDTO userDTO,
@@ -43,20 +48,34 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO) {
         // Kiểm tra thông tin đăng nhập và sinh token
         try {
-            String token = userService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
-            // Trả về token trong response
-            return ResponseEntity.ok(token);
+            LoginResponse loginResponse = userService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+            return ResponseEntity.ok(loginResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
     @GetMapping
-    public List<ResponseUser> getUserByName(@RequestParam String name) {
+    public List<UserResponseDTO> getUserByName(@RequestParam String name) {
         return userService.findUserByName(name);
+    }
+
+    @GetMapping("/profile")
+    public UserResponseDTO getUserProfile() {
+        return userConverter.toResponseUser(userService.findById(SecurityUtils.getPrincipal().getId()));
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
+        try {
+            userService.updateUser(userUpdateDTO);
+            return ResponseEntity.ok("Updated avatar successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

@@ -1,15 +1,17 @@
 package com.taga.management.services.impl;
 
 import com.taga.management.DTOs.UserDTO;
+import com.taga.management.DTOs.request.UserUpdateDTO;
+import com.taga.management.DTOs.response.LoginResponse;
 import com.taga.management.components.JwtTokenUtil;
-import com.taga.management.controllers.UserController;
 import com.taga.management.converters.UserConverter;
 import com.taga.management.models.Role;
 import com.taga.management.models.User;
-import com.taga.management.models.response.ResponseUser;
+import com.taga.management.DTOs.response.UserResponseDTO;
 import com.taga.management.repository.RoleRepository;
 import com.taga.management.repository.UserRepository;
 import com.taga.management.services.IUserService;
+import com.taga.management.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -65,8 +67,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String login(String username, String password) throws Exception {
+    public LoginResponse login(String username, String password) throws Exception {
         Optional<User> optionalUser = userRepository.findByUsername(username);
+        LoginResponse loginResponse = new LoginResponse();
         if(optionalUser.isEmpty()){
             throw new Exception("Username not found");
         }
@@ -82,7 +85,9 @@ public class UserService implements IUserService {
 
         //authenticate with Java Spring security
         authenticationManager.authenticate(authenticationToken);
-        return jwtTokenUtil.generateToken(existingUser);
+        loginResponse.setToken(jwtTokenUtil.generateToken(existingUser));
+        loginResponse.setUserId(existingUser.getId());
+        return loginResponse;
     }
 
     @Override
@@ -91,8 +96,23 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<ResponseUser> findUserByName(String name) {
+    public User findByUsername(String username) {
+        return userRepository.findUserByUsername(username);
+    }
+
+    @Override
+    public List<UserResponseDTO> findUserByName(String name) {
         List<User> userList = userRepository.findAllByFullNameContains(name);
         return userConverter.toResponseUserList(userList);
+    }
+
+    @Override
+    public void updateUser(UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findById(userUpdateDTO.getId()).get();
+        user.setPictureUrl(userUpdateDTO.getPictureUrl());
+        user.setFullName(userUpdateDTO.getFullName());
+        user.setAddress(userUpdateDTO.getAddress());
+        user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
+        userRepository.save(user);
     }
 }

@@ -21,6 +21,5 @@ public class TaskResponseDTO {
     String priority;
     Date dueDate;
     String status;
-    Integer commentNumber;
     ArrayList<Comment> comments;
 }

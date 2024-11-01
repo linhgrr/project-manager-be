@@ -34,6 +34,9 @@ public class Project {
     @Column(name = "task")
     private String status;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Message> messages;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "project_manager",

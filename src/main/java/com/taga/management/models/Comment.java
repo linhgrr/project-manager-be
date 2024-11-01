@@ -18,14 +18,11 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     String author;
     String content;
     Date createdDate;
-
     @ManyToOne
     @JoinColumn(name = "task_id")
     Task task;
-
 }
 

@@ -7,7 +7,7 @@ import com.taga.management.exceptions.AccessDeniedException;
 import com.taga.management.exceptions.ProjectNotFoundException;
 import com.taga.management.models.Project;
 import com.taga.management.models.User;
-import com.taga.management.models.response.ResponseProject;
+import com.taga.management.DTOs.response.ProjectResponseDTO;
 import com.taga.management.repository.ProjectRepository;
 import com.taga.management.services.IProjectService;
 import com.taga.management.utils.SecurityUtils;
@@ -27,7 +27,7 @@ public class ProjectService implements IProjectService{
     private ProjectConverter projectConverter;
 
     @Override
-    public List<ResponseProject> getAllProjects() {
+    public List<ProjectResponseDTO> getAllProjects() {
         Long id = SecurityUtils.getPrincipal().getId();
         User user = userService.findById(id);
         return projectConverter.toResponseProjectList(user.getJoinedProjects());
@@ -55,11 +55,11 @@ public class ProjectService implements IProjectService{
     }
 
     @Override
-    public ResponseProject getProjectById(Long projectId) {
-        ResponseProject responseProject;
+    public ProjectResponseDTO getProjectById(Long projectId) {
+        ProjectResponseDTO projectResponseDTO;
         Project project = projectRepository.findById(projectId).orElse(null);
-        responseProject = projectConverter.toResponseProject(project);
-        return responseProject;
+        projectResponseDTO = projectConverter.toResponseProject(project);
+        return projectResponseDTO;
     }
 
     @Override

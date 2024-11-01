@@ -1,5 +1,6 @@
 package com.taga.management.DTOs.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,7 +14,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskInputDTO {
     Long id;
-
+    @NotBlank(message = "please enter title for this task")
     String title;
     String description;
     String priority;

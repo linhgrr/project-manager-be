@@ -2,9 +2,9 @@ package com.taga.management.controllers;
 
 import com.taga.management.DTOs.request.TaskInputDTO;
 import com.taga.management.DTOs.response.TaskResponseDTO;
+import com.taga.management.exceptions.AccessDeniedException;
 import com.taga.management.models.ResponseEntity;
-import com.taga.management.models.Task;
-import com.taga.management.services.TaskService;
+import com.taga.management.services.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,14 +15,25 @@ import java.util.ArrayList;
 @RequestMapping("${api}/projects")
 public class TaskController {
     @Autowired
-    private TaskService taskService;
+    private ITaskService taskService;
 
     // Add a new endpoint to get all tasks of a project
     @GetMapping(value = "/{projectId}/tasks")
-    public ArrayList<TaskResponseDTO> getTaskOfProject(@PathVariable Long projectId) {
+    public ResponseEntity getTaskOfProject(@PathVariable Long projectId) {
+        ResponseEntity responseEntity = new ResponseEntity();
         ArrayList<TaskResponseDTO> tasks = new ArrayList<>();
-        tasks = taskService.getTaskOfProject(projectId);
-        return tasks;
+        try {
+            tasks = taskService.getTaskOfProject(projectId);
+            responseEntity.setMessage("Get task success");
+            responseEntity.setData(tasks);
+        }  catch (AccessDeniedException e) {
+            responseEntity.setMessage("You do not have permission to get tasks of this project");
+        }
+        catch (Exception e) {
+            responseEntity.setMessage("Failed to get task");
+            return responseEntity;
+        }
+        return responseEntity;
     }
 
     // Add a new endpoint to add or update a task
@@ -32,7 +43,10 @@ public class TaskController {
         try {
             taskInputDTO.setProjectId(projectId);
             responseEntity = taskService.addOrUpdateTask(taskInputDTO);
-        } catch (Exception e) {
+        }catch (AccessDeniedException e) {
+            responseEntity.setMessage("You do not have permission to create tasks of this project");
+        }
+        catch (Exception e) {
             responseEntity.setMessage("Failed to add task");
             return responseEntity;
         }

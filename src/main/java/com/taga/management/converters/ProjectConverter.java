@@ -5,7 +5,7 @@ import com.taga.management.DTOs.ProjectDTO;
 import com.taga.management.DTOs.StaffDTO;
 import com.taga.management.models.Project;
 import com.taga.management.models.User;
-import com.taga.management.models.response.ResponseProject;
+import com.taga.management.DTOs.response.ProjectResponseDTO;
 import com.taga.management.utils.SecurityUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,33 +24,33 @@ public class ProjectConverter {
         return modelMapper.map(projectDTO, Project.class);
     }
 
-    public List<ResponseProject> toResponseProjectList(List<Project> projectList) {
-        List<ResponseProject> responseProjectList = new ArrayList<>();
+    public List<ProjectResponseDTO> toResponseProjectList(List<Project> projectList) {
+        List<ProjectResponseDTO> projectResponseDTOList = new ArrayList<>();
         Long id = SecurityUtils.getPrincipal().getId();
         for(Project project : projectList) {
-            ResponseProject responseProject = modelMapper.map(project, ResponseProject.class);
-            setup(project, responseProject, id);
-            responseProjectList.add(responseProject);
+            ProjectResponseDTO projectResponseDTO = modelMapper.map(project, ProjectResponseDTO.class);
+            setup(project, projectResponseDTO, id);
+            projectResponseDTOList.add(projectResponseDTO);
         }
-        return responseProjectList;
+        return projectResponseDTOList;
     }
 
-    public ResponseProject toResponseProject(Project project) {
-        ResponseProject responseProject = modelMapper.map(project, ResponseProject.class);
+    public ProjectResponseDTO toResponseProject(Project project) {
+        ProjectResponseDTO projectResponseDTO = modelMapper.map(project, ProjectResponseDTO.class);
         Long id = SecurityUtils.getPrincipal().getId();
-        setup(project, responseProject, id);
-        return responseProject;
+        setup(project, projectResponseDTO, id);
+        return projectResponseDTO;
     }
 
-    private void setup(Project project, ResponseProject responseProject, Long id) {
-        responseProject.setManager(false);
+    private void setup(Project project, ProjectResponseDTO projectResponseDTO, Long id) {
+        projectResponseDTO.setManager(false);
         for (User user: project.getManagers()){
             if(user.getId().equals(id)){
-                responseProject.setManager(true);
+                projectResponseDTO.setManager(true);
                 break;
             }
         }
-        responseProject.setManagers(project.getManagers().stream().map(manager -> {
+        projectResponseDTO.setManagers(project.getManagers().stream().map(manager -> {
                     ManagerDTO managerDTO = new ManagerDTO();
                     managerDTO.setId(manager.getId());
                     managerDTO.setUsername(manager.getUsername());
@@ -58,7 +58,7 @@ public class ProjectConverter {
                     return managerDTO;
                 })
                 .collect(Collectors.toList()));
-        responseProject.setStaffs(project.getStaffs().stream().map(staff -> {
+        projectResponseDTO.setStaffs(project.getStaffs().stream().map(staff -> {
                     StaffDTO staffDTO = new StaffDTO();
                     staffDTO.setId(staff.getId());
                     staffDTO.setUsername(staff.getUsername());

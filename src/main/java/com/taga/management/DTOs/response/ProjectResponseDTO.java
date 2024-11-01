@@ -1,9 +1,7 @@
-package com.taga.management.models.response;
+package com.taga.management.DTOs.response;
 
 import com.taga.management.DTOs.ManagerDTO;
 import com.taga.management.DTOs.StaffDTO;
-import com.taga.management.models.Project;
-import com.taga.management.models.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ResponseProject {
+public class ProjectResponseDTO {
     private Long id;
     private String title;
     private String description;
@@ -22,5 +20,5 @@ public class ResponseProject {
     private List<ManagerDTO> managers;
     private List<StaffDTO> staffs;
     private boolean isManager;
-    private String pictureUrl;
+    private String pictureUrl; 
 }

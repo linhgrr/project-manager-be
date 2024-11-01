@@ -2,14 +2,13 @@ package com.taga.management.services;
 
 import com.taga.management.DTOs.AssignStaffDTO;
 import com.taga.management.DTOs.ProjectDTO;
-import com.taga.management.models.Project;
-import com.taga.management.models.response.ResponseProject;
+import com.taga.management.DTOs.response.ProjectResponseDTO;
 
 import java.util.List;
 
 public interface IProjectService {
-    List<ResponseProject> getAllProjects();
+    List<ProjectResponseDTO> getAllProjects();
     void createProject(ProjectDTO projectDTO) throws Exception;
-    ResponseProject getProjectById(Long projectId);
+    ProjectResponseDTO getProjectById(Long projectId);
     void assignStaff(AssignStaffDTO assignStaffDTO) throws Exception;
 }
