@@ -17,8 +17,12 @@ public class TaskInputDTO {
     @NotBlank(message = "please enter title for this task")
     String title;
     String description;
-    String priority;
+    Long creatorId;
+    Long assigneeId;
+    Date startDate;
     Date dueDate;
+    String priority;
     String status;
+    String taskImageUrl;
     Long projectId;
 }

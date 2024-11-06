@@ -6,5 +6,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ManagerDTO extends UserResponseDTO {
+public class AssigneeDTO extends UserResponseDTO {
 }

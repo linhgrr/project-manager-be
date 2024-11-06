@@ -56,9 +56,11 @@ public class  User extends BaseEntity implements UserDetails {
     @ManyToMany(mappedBy = "staffs")
     private List<Project> joinedProjects;
 
-    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -66,8 +68,6 @@ public class  User extends BaseEntity implements UserDetails {
         authorityList.add(new SimpleGrantedAuthority("ROLE_"+getRole().getName().toUpperCase()));
         return authorityList;
     }
-
-
 
     @Override
     public String getUsername() {

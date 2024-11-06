@@ -1,7 +1,7 @@
 package com.taga.management.DTOs.response;
 
 import com.taga.management.DTOs.ManagerDTO;
-import com.taga.management.DTOs.StaffDTO;
+import com.taga.management.DTOs.AssigneeDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +18,7 @@ public class ProjectResponseDTO {
     private Date endDate;
     private String status;
     private List<ManagerDTO> managers;
-    private List<StaffDTO> staffs;
+    private List<AssigneeDTO> staffs;
     private boolean isManager;
     private String pictureUrl; 
 }

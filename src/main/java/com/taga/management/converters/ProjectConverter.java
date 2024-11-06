@@ -2,7 +2,7 @@ package com.taga.management.converters;
 
 import com.taga.management.DTOs.ManagerDTO;
 import com.taga.management.DTOs.ProjectDTO;
-import com.taga.management.DTOs.StaffDTO;
+import com.taga.management.DTOs.AssigneeDTO;
 import com.taga.management.models.Project;
 import com.taga.management.models.User;
 import com.taga.management.DTOs.response.ProjectResponseDTO;
@@ -50,21 +50,9 @@ public class ProjectConverter {
                 break;
             }
         }
-        projectResponseDTO.setManagers(project.getManagers().stream().map(manager -> {
-                    ManagerDTO managerDTO = new ManagerDTO();
-                    managerDTO.setId(manager.getId());
-                    managerDTO.setUsername(manager.getUsername());
-                    managerDTO.setPictureUrl(manager.getPictureUrl());
-                    return managerDTO;
-                })
+        projectResponseDTO.setManagers(project.getManagers().stream().map(manager -> modelMapper.map(manager, ManagerDTO.class))
                 .collect(Collectors.toList()));
-        projectResponseDTO.setStaffs(project.getStaffs().stream().map(staff -> {
-                    StaffDTO staffDTO = new StaffDTO();
-                    staffDTO.setId(staff.getId());
-                    staffDTO.setUsername(staff.getUsername());
-                    staffDTO.setPictureUrl(staff.getPictureUrl());
-                    return staffDTO;
-                })
+        projectResponseDTO.setStaffs(project.getStaffs().stream().map(staff -> modelMapper.map(staff, AssigneeDTO.class))
                 .collect(Collectors.toList()));
     }
 }

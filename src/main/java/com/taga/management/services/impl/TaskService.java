@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -34,27 +35,25 @@ public class TaskService implements ITaskService {
     private ModelMapper modelMapper;
 
     @Override
-    public ArrayList<TaskResponseDTO> getTaskOfProject(Long projectId) {
+    public List<TaskResponseDTO> getTaskOfProject(Long projectId) {
         ArrayList<Task> tasks;
-        ArrayList<TaskResponseDTO> taskResponseDTOs = new ArrayList<>();
         try {
             Project project = projectRepository.findById(projectId)
-                    .orElseThrow(EntityNotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException("Project not found"));
             Long userId = SecurityUtils.getPrincipal().getId();
-            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(userId));
+            boolean isStaff = project.getStaffs().stream().anyMatch(user -> user.getId().equals(userId));
 
-            if (!isManager) {
-                throw new AccessDeniedException("User does not have permission to assign staff to this project");
+            if (!isStaff) {
+                throw new AccessDeniedException("You do not have permission to get tasks of this project");
             }
-            tasks = taskRepository.findByProjectId(projectId);
-        }
-        catch (Exception e){
-            taskResponseDTOs = null;
-            return taskResponseDTOs;
-        }
 
-        ArrayList<TaskResponseDTO> finalTaskResponseDTOs = taskResponseDTOs;
-        return getTaskResponseDTOS(tasks, taskResponseDTOs, finalTaskResponseDTOs);
+            tasks = taskRepository.findByProjectId(projectId);
+            return taskConverter.toTaskResponseDTOs(tasks);
+        } catch (AccessDeniedException | EntityNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while fetching tasks", e);
+        }
     }
 
 
@@ -63,17 +62,14 @@ public class TaskService implements ITaskService {
         ResponseEntity responseEntity = new ResponseEntity();
         Task task = taskConverter.convertToTask(taskInputDTO);
         try {
-            Project project = projectRepository.findById(taskInputDTO.getProjectId())
-                    .orElseThrow(EntityNotFoundException::new);
-            Long userId = SecurityUtils.getPrincipal().getId();
-            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(userId));
-
+            Project project = task.getProject();
+            Long creatorId = task.getCreator().getId();
+            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(creatorId));
             if (!isManager) {
                 throw new AccessDeniedException("User does not have permission to assign staff to this project");
             }
-            task.setProject(project);
         } catch (Exception e) {
-            responseEntity.setMessage("Project not found");
+            responseEntity.setMessage("Invalid task input");
             return responseEntity;
         }
         if (taskInputDTO.getProjectId() != null){
