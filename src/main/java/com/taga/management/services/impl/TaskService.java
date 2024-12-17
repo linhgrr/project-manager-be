@@ -6,6 +6,7 @@ import com.taga.management.exceptions.AccessDeniedException;
 import com.taga.management.models.Project;
 import com.taga.management.models.ResponseEntity;
 import com.taga.management.models.Task;
+import com.taga.management.models.User;
 import com.taga.management.repository.ProjectRepository;
 import com.taga.management.repository.TaskRepository;
 import com.taga.management.converters.TaskConverter;
@@ -107,6 +108,19 @@ public class TaskService implements ITaskService {
             responseEntity.setMessage("Task not found");
         }
         return responseEntity;
+    }
+
+    @Override
+    public Task getTaskById(Long taskId) {
+        return taskRepository.getTaskById(taskId);
+    }
+
+    @Override
+    public List<TaskResponseDTO> getAllTasks() {
+        User user = SecurityUtils.getPrincipal();
+        List<Task> tasks = taskRepository.getTaskByAssignee(user);
+
+        return taskConverter.toTaskResponseDTOs(tasks);
     }
 
     private ArrayList<TaskResponseDTO> getTaskResponseDTOS(ArrayList<Task> tasks, ArrayList<TaskResponseDTO> taskResponseDTOs, ArrayList<TaskResponseDTO> finalTaskResponseDTOs) {

@@ -56,6 +56,7 @@ public class UserService implements IUserService {
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .pictureUrl(userDTO.getPictureUrl())
                 .active(true)
+                .isSubscribed(false)
                 .role(role.get())
                 .build();
 
@@ -87,6 +88,8 @@ public class UserService implements IUserService {
         authenticationManager.authenticate(authenticationToken);
         loginResponse.setToken(jwtTokenUtil.generateToken(existingUser));
         loginResponse.setUserId(existingUser.getId());
+        loginResponse.setFullName(existingUser.getFullName());
+        loginResponse.setSubscribed(existingUser.isSubscribed());
         return loginResponse;
     }
 
@@ -113,6 +116,12 @@ public class UserService implements IUserService {
         user.setFullName(userUpdateDTO.getFullName());
         user.setAddress(userUpdateDTO.getAddress());
         user.setDateOfBirth(userUpdateDTO.getDateOfBirth());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void updateSubscription(User user) {
+        user.setSubscribed(true);
         userRepository.save(user);
     }
 }

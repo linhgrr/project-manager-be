@@ -15,4 +15,5 @@ public interface IUserService {
     User findByUsername(String username);
     List<UserResponseDTO> findUserByName(String name);
     void updateUser(UserUpdateDTO user);
+    void updateSubscription(User user);
 }

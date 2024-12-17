@@ -70,7 +70,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );
         for(Pair<String, String> bypassToken: bypassTokens) {
-            if (request.getServletPath().contains("/ws")) return true;
+            if (request.getServletPath().contains("/ws") || request.getServletPath().contains("vnpay-return")) return true;
             if (request.getServletPath().contains(bypassToken.getFirst()) &&
                     request.getMethod().equals(bypassToken.getSecond())) {
                 return true;

@@ -14,4 +14,5 @@ public class UserUpdateDTO {
     private String address;
     private Date dateOfBirth;
     private String pictureUrl;
+    private boolean isSubscribed;
 }

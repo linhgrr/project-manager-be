@@ -32,4 +32,6 @@ public class UserDTO {
 
     @JsonProperty("picture_url")
     private String pictureUrl;
+
+    private boolean isSubscribed;
 }

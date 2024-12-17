@@ -12,6 +12,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskCommentDTO {
     Long id;
+    Long taskId;
     UserResponseDTO author;
     String content;
     Date createdDate;

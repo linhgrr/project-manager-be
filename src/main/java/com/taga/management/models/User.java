@@ -2,7 +2,6 @@ package com.taga.management.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,6 +60,12 @@ public class  User extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PaymentTransaction> paymentTransactions;
+
+    @Column(name = "is_subscribed")
+    private boolean isSubscribed = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

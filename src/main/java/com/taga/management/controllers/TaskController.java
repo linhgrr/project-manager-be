@@ -10,13 +10,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api}/projects")
+@RequestMapping("${api}")
 public class TaskController {
     @Autowired
     private ITaskService taskService;
 
+    // add a new endpoint to get all tasks of user
+    @GetMapping(value = "/tasks")
+    public ResponseEntity getAllTasks() {
+        ResponseEntity responseEntity = new ResponseEntity();
+        List<TaskResponseDTO> tasks;
+        try {
+            tasks = taskService.getAllTasks();
+            responseEntity.setMessage("Get task success");
+            responseEntity.setData(tasks);
+        } catch (Exception e) {
+            responseEntity.setMessage("Failed to get task");
+            return responseEntity;
+        }
+        return responseEntity;
+    }
+
     // Add a new endpoint to get all tasks of a project
-    @GetMapping(value = "/{projectId}/tasks")
+    @GetMapping(value = "/projects/{projectId}/tasks")
     public ResponseEntity getTaskOfProject(@PathVariable Long projectId) {
         ResponseEntity responseEntity = new ResponseEntity();
         List<TaskResponseDTO> tasks;
@@ -35,7 +51,7 @@ public class TaskController {
     }
 
     // Add a new endpoint to add or update a task
-    @PostMapping(value = "/{projectId}/tasks")
+    @PostMapping(value = "/projects/{projectId}/tasks")
     public ResponseEntity addOrUpdateTask(@RequestBody TaskInputDTO taskInputDTO, @PathVariable Long projectId) {
         ResponseEntity responseEntity = new ResponseEntity();
         try {
@@ -52,7 +68,7 @@ public class TaskController {
     }
 
     // Add a new endpoint to delete a task
-    @DeleteMapping(value = "/{projectId}/tasks/{taskId}")
+    @DeleteMapping(value = "/projects/{projectId}/tasks/{taskId}")
     public ResponseEntity deleteTask(@PathVariable Long projectId, @PathVariable Long taskId) {
         ResponseEntity responseEntity = new ResponseEntity();
         try {
@@ -65,10 +81,12 @@ public class TaskController {
     }
 
     // Add a new endpoint to find tasks by title
-    @GetMapping(value = "/{projectId}/tasks/{title}")
+    @GetMapping(value = "/projects/{projectId}/tasks/{title}")
     public List<TaskResponseDTO> findTasksByTitle(@PathVariable Long projectId, @PathVariable String title) {
         List<TaskResponseDTO> tasks;
         tasks = taskService.findTasksByTitle(title);
         return tasks;
     }
+
+    
 }

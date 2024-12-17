@@ -38,6 +38,11 @@ public class ProjectService implements IProjectService{
         Project project = projectConverter.toProject(projectDTO);
         Long id = SecurityUtils.getPrincipal().getId();
         User user = userService.findById(id);
+
+        // check so luong project cua user
+        if (user.getManagedProjects().size() >= 2) {
+            throw new AccessDeniedException("User can only join up to 2 projects");
+        }
         //Set owner la prj manager va staffs
         List<User> staffs = new ArrayList<>();
         staffs.add(user);

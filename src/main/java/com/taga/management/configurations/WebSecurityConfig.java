@@ -32,7 +32,8 @@ public class WebSecurityConfig {
                             .requestMatchers(
                                     String.format("%s/users/register", apiPrefix),
                                     String.format("%s/users/login", apiPrefix),
-                                    "/ws/**"
+                                    "/ws/**",
+                                    "/api/payment/**"
                             ).permitAll()
                             .anyRequest().authenticated();
                 });

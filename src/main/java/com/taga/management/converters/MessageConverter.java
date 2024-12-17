@@ -38,6 +38,8 @@ public class MessageConverter {
         MessageResponse messageResponse = modelMapper.map(message, MessageResponse.class);
         User user = userService.findById(messageResponse.getSenderId());
         messageResponse.setFullName(user.getFullName());
+        messageResponse.setPictureUrl(user.getPictureUrl());
+        messageResponse.setSubscribed(user.isSubscribed());
         return messageResponse;
     }
 }

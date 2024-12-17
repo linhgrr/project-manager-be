@@ -27,4 +27,5 @@ public class TaskResponseDTO {
     String taskImageUrl;
     List<TaskCommentDTO> comments;
     // chua co task detail
+    List<SubTaskDTO> subTasks;
 }

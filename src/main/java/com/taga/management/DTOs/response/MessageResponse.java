@@ -14,6 +14,8 @@ public class MessageResponse {
     private String content;
     private Long senderId;
     private String fullName;
+    private String pictureUrl;
+    private boolean isSubscribed;
     private LocalDateTime timestamp;
 }
 
