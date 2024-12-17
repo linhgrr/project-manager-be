@@ -59,28 +59,19 @@ public class TaskService implements ITaskService {
 
 
     @Override
-    public ResponseEntity addOrUpdateTask(TaskInputDTO taskInputDTO) {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public TaskResponseDTO addOrUpdateTask(TaskInputDTO taskInputDTO) {
         Task task = taskConverter.convertToTask(taskInputDTO);
-        try {
-            Project project = task.getProject();
-            Long creatorId = task.getCreator().getId();
-            boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(creatorId));
-            if (!isManager) {
-                throw new AccessDeniedException("User does not have permission to assign staff to this project");
-            }
-        } catch (Exception e) {
-            responseEntity.setMessage("Invalid task input");
-            return responseEntity;
+
+        Project project = task.getProject();
+        Long creatorId = task.getCreator().getId();
+        boolean isManager = project.getManagers().stream().anyMatch(user -> user.getId().equals(creatorId));
+        if (!isManager) {
+            throw new AccessDeniedException("User does not have permission to add task");
         }
-        if (taskInputDTO.getProjectId() != null){
-            responseEntity.setMessage("Successfully added task");
-        }
-        else {
-            responseEntity.setMessage("Update task successfully");
-        }
+
         taskRepository.save(task);
-        return responseEntity;
+
+        return taskConverter.toTaskResponseDTO(task);
     }
 
     @Override

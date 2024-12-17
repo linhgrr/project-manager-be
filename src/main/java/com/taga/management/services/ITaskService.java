@@ -11,7 +11,7 @@ public interface ITaskService {
     // get all tasks of a project
     List<TaskResponseDTO> getTaskOfProject(Long projectId);
     // add or update a task
-    ResponseEntity addOrUpdateTask(TaskInputDTO taskInputDTO);
+    TaskResponseDTO addOrUpdateTask(TaskInputDTO taskInputDTO);
     // find tasks by title
     List<TaskResponseDTO> findTasksByTitle(String title);
     // delete a task

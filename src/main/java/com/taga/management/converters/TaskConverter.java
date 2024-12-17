@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,11 +46,11 @@ public class TaskConverter {
 
     public List<TaskResponseDTO> toTaskResponseDTOs(List<Task> tasks) {
         return tasks.stream()
-                .map(this::convertToTaskResponseDTO)
+                .map(this::toTaskResponseDTO)
                 .toList();
     }
 
-    private TaskResponseDTO convertToTaskResponseDTO(Task task) {
+    public TaskResponseDTO toTaskResponseDTO(Task task) {
         TaskResponseDTO taskResponseDTO = modelMapper.map(task, TaskResponseDTO.class);
         if (task.getAssignee() != null) {
             taskResponseDTO.setAssignee(modelMapper.map(task.getAssignee(), AssigneeDTO.class));
@@ -57,7 +58,8 @@ public class TaskConverter {
         if (task.getCreator() != null) {
             taskResponseDTO.setCreator(modelMapper.map(task.getCreator(), ManagerDTO.class));
         }
-        taskResponseDTO.setComments(convertToTaskCommentDTOs(task.getComments()));
+        Optional<List<Comment>> commnets = Optional.ofNullable(task.getComments());
+        commnets.ifPresent(comments -> taskResponseDTO.setComments(convertToTaskCommentDTOs(comments)));
         return taskResponseDTO;
     }
 

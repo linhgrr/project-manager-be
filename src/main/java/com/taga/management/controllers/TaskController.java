@@ -3,9 +3,9 @@ package com.taga.management.controllers;
 import com.taga.management.DTOs.request.TaskInputDTO;
 import com.taga.management.DTOs.response.TaskResponseDTO;
 import com.taga.management.exceptions.AccessDeniedException;
-import com.taga.management.models.ResponseEntity;
 import com.taga.management.services.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -17,67 +17,53 @@ public class TaskController {
 
     // add a new endpoint to get all tasks of user
     @GetMapping(value = "/tasks")
-    public ResponseEntity getAllTasks() {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public ResponseEntity<?> getAllTasks() {
         List<TaskResponseDTO> tasks;
         try {
             tasks = taskService.getAllTasks();
-            responseEntity.setMessage("Get task success");
-            responseEntity.setData(tasks);
+            return ResponseEntity.ok(tasks);
         } catch (Exception e) {
-            responseEntity.setMessage("Failed to get task");
-            return responseEntity;
+            return ResponseEntity.badRequest().body("Cannot get tasks");
         }
-        return responseEntity;
     }
 
     // Add a new endpoint to get all tasks of a project
     @GetMapping(value = "/projects/{projectId}/tasks")
-    public ResponseEntity getTaskOfProject(@PathVariable Long projectId) {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public ResponseEntity<?> getTaskOfProject(@PathVariable Long projectId) {
         List<TaskResponseDTO> tasks;
         try {
             tasks = taskService.getTaskOfProject(projectId);
-            responseEntity.setMessage("Get task success");
-            responseEntity.setData(tasks);
+            return ResponseEntity.ok(tasks);
         }  catch (AccessDeniedException e) {
-            responseEntity.setMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         catch (Exception e) {
-            responseEntity.setMessage("Failed to get task");
-            return responseEntity;
+            return ResponseEntity.badRequest().body("Failed to get task");
         }
-        return responseEntity;
     }
 
     // Add a new endpoint to add or update a task
     @PostMapping(value = "/projects/{projectId}/tasks")
-    public ResponseEntity addOrUpdateTask(@RequestBody TaskInputDTO taskInputDTO, @PathVariable Long projectId) {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public ResponseEntity<?> addOrUpdateTask(@RequestBody TaskInputDTO taskInputDTO, @PathVariable Long projectId) {
         try {
-                taskInputDTO.setProjectId(projectId);
-            responseEntity = taskService.addOrUpdateTask(taskInputDTO);
+            taskInputDTO.setProjectId(projectId);
+            return ResponseEntity.ok(taskService.addOrUpdateTask(taskInputDTO));
         }catch (AccessDeniedException e) {
-            responseEntity.setMessage("You do not have permission to create tasks of this project");
+            return ResponseEntity.badRequest().body("You do not have permission to create tasks of this project");
         }
         catch (Exception e) {
-            responseEntity.setMessage("Failed to add task");
-            return responseEntity;
+            return ResponseEntity.badRequest().body("Failed to add task");
         }
-        return responseEntity;
     }
 
     // Add a new endpoint to delete a task
     @DeleteMapping(value = "/projects/{projectId}/tasks/{taskId}")
-    public ResponseEntity deleteTask(@PathVariable Long projectId, @PathVariable Long taskId) {
-        ResponseEntity responseEntity = new ResponseEntity();
+    public ResponseEntity<?> deleteTask(@PathVariable Long projectId, @PathVariable Long taskId) {
         try {
-            responseEntity = taskService.deleteTask(projectId, taskId);
+            return ResponseEntity.ok(taskService.deleteTask(projectId, taskId));
         } catch (Exception e) {
-            responseEntity.setMessage("Failed to delete task");
-            return responseEntity;
+            return ResponseEntity.badRequest().body("Failed to delete task");
         }
-        return responseEntity;
     }
 
     // Add a new endpoint to find tasks by title
@@ -87,6 +73,4 @@ public class TaskController {
         tasks = taskService.findTasksByTitle(title);
         return tasks;
     }
-
-    
 }
