@@ -14,11 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @Table(name = "task")
-public class Task {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Task extends BaseEntity {
 
     @Column(name = "title")
     private String title;
@@ -45,10 +41,6 @@ public class Task {
 
     @Column(name = "status")
     private String status;
-
-    @CreatedDate
-    @Column(name = "created_date")
-    private Date createdDate;
 
     @ManyToOne
     @JoinColumn(name = "project_id")

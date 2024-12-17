@@ -14,11 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-public class Project {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Project extends BaseEntity {
     @Column(name = "title")
     private String title;
 

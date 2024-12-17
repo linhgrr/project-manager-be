@@ -15,21 +15,13 @@ import java.util.Date;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "comment")
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
+public class Comment extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "author_id")
     User author;
 
     @Column(name = "content")
     String content;
-
-    @CreatedDate
-    @Column(name = "created_date")
-    Date createdDate;
 
     @ManyToOne
     @JoinColumn(name = "task_id")

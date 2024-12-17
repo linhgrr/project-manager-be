@@ -60,6 +60,11 @@ public class ProjectService implements IProjectService{
     }
 
     @Override
+    public void deleteProject(Long projectId) throws Exception {
+
+    }
+
+    @Override
     public ProjectResponseDTO getProjectById(Long projectId) {
         ProjectResponseDTO projectResponseDTO;
         Project project = projectRepository.findById(projectId).orElse(null);

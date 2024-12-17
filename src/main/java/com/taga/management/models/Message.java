@@ -10,10 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "message")
-public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Message extends BaseEntity{
     private String content;
     @Column(name = "sender_id")
     private Long senderId;

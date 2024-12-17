@@ -13,13 +13,8 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @Table(name = "taskdetail")
-public class SubTask {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SubTask extends BaseEntity {
     private String detailDescription;
-    private Date createdDate;
     @Enumerated(EnumType.STRING)
     private SubTaskStatus status;
 
